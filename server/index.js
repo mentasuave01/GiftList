@@ -1,29 +1,30 @@
-const express = require('express');
-const verifyProof = require('../utils/verifyProof');
+import { Hono } from 'hono'
+import { serve } from '@hono/node-server'
 
-const port = 1225;
+//import verifyProof from '../utils/verifyProof.js' // Make sure this is an ES module or adapted accordingly
 
-const app = express();
-app.use(express.json());
+const app = new Hono()
 
 // TODO: hardcode a merkle root here representing the whole nice list
 // paste the hex string in here, without the 0x prefix
-const MERKLE_ROOT = '';
+const MERKLE_ROOT = ''
 
-app.post('/gift', (req, res) => {
+
+app.post('/gift', async (c) => {
   // grab the parameters from the front-end here
-  const body = req.body;
+  const body = await c.req.json()
 
+  console.log(body)
   // TODO: prove that a name is in the list 
-  const isInTheList = false;
-  if(isInTheList) {
-    res.send("You got a toy robot!");
+  const isInTheList = false
+  if (isInTheList) {
+    return c.text("You got a toy robot!")
+  } else {
+    return c.text("You are not on the list :(")
   }
-  else {
-    res.send("You are not on the list :(");
-  }
-});
+})
 
-app.listen(port, () => {
-  console.log(`Listening on port ${port}!`);
-});
+const port = 1225
+serve(app, (info) => {
+  console.log(`Listening on http://localhost:${info.port}`) // Listening on http://localhost:3000
+})
